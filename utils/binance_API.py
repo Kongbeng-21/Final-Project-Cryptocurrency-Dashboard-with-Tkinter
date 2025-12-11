@@ -1,13 +1,14 @@
 import websocket
 import threading
 import json
+from utils import config
 
-class BinanceAPI:
+class BinanceAPI: 
     def __init__(self, callback_func):
         self.ws = None
         self.is_running = False
         self.callback_func = callback_func
-        self.ws_url = "wss://stream.binance.com:9443/ws/btcusdt@ticker" 
+        self.ws_url = config.WS_URL
 
     def start(self):
         self.is_running = True
@@ -26,13 +27,12 @@ class BinanceAPI:
             self.ws.close()
 
     def on_message(self, ws, message):
-        if not self.is_running:
-            return
+        if not self.is_running: return
         data = json.loads(message)
         self.callback_func(data)
 
     def on_error(self, ws, error):
         print(f"Error: {error}")
 
-    def on_close(self, ws, close_status_code, close_msg):
+    def on_close(self, ws, close_status, close_msg):
         print("WebSocket Closed")
