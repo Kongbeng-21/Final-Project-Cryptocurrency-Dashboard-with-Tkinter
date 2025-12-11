@@ -1,6 +1,7 @@
 import tkinter as tk
 from utils.binance_API import BinanceAPI     
 from components.ticker import PriceCard,BidAskCard,VolumeCard
+from components.orderbook import OrderBook
 from utils import config                     
 
 class DashboardApp:
@@ -26,18 +27,36 @@ class DashboardApp:
         self.volume_card = VolumeCard(top_frame, "24h Statistics")
         self.volume_card.pack(side="left", fill="both", expand=True, padx=5)
         
+        bottom_frame = tk.Frame(self.root, bg=config.BACKGROUND_COLOR)
+        bottom_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        self.order_book = OrderBook(bottom_frame)
+        self.order_book.pack(side="left", fill="both", expand=True, padx=5)
+
+        self.chart_frame = tk.Frame(bottom_frame, bg="black", width=600)
+        self.chart_frame.pack(side="right", fill="both", expand=True, padx=5)
+        
     def handle_data(self, data):
-        price = data['c']
-        change = data['p']
-        best_bid = data['b']
-        best_ask = data['a']
-        self.root.after(0, self.update_ui, price, change, best_bid, best_ask)
+        stream = response.get('stream')
+        data = response.get('data')
+
+        if not data: return
+
+        if 'ticker' in stream:
+            price = data['c']
+            change = data['p']
+            bid = data['b']
+            ask = data['a']
+            vol_btc = data['v']
+            vol_usdt = data['q']
+            self.root.after(0, self.update_ticker_ui, price, change, bid, ask, vol_btc, vol_usdt)
         
-        vol_btc = data['v']
-        vol_usdt = data['q']
-        self.root.after(0, self.update_ui, price, change, bid, ask, vol_btc, vol_usdt)
-        
-    def update_ui(self, price, change, bid, ask):
+        elif 'depth' in stream:
+            bids = data['bids']
+            asks = data['asks']
+            self.root.after(0, self.order_book.update_data, bids, asks)
+
+    def update_ticker_ui(self, price, change, bid, ask, vol_btc, vol_usdt):
         self.price_card.update_data(price, change)
         self.bid_ask_card.update_data(bid, ask)
         self.volume_card.update_data(vol_btc, vol_usdt)
