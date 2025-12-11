@@ -40,3 +40,27 @@ class BidAskCard(tk.Frame):
         self.bid_label.config(text=f"BID(Buy): {bid_float:,.2f}")
         self.ask_label.config(text=f"ASK(Sell): {ask_float:,.2f}")
         self.spread_label.config(text=f"Spread: {spread:.4f}")
+
+class VolumeCard(tk.Frame):
+    def __init__(self, parent, title):
+        super().__init__(parent, bg=config.COMPONENT_BG)
+        tk.Label(self, text=title, bg=config.COMPONENT_BG, fg=config.TEXT_COLOR, 
+                 font=config.FONT_MAIN).pack(pady=5)
+        
+        self.content_frame = tk.Frame(self, bg=config.COMPONENT_BG)
+        self.content_frame.pack(expand=True)
+        
+        self.vol_btc_label = tk.Label(self.content_frame, text="Vol(BTC): --", 
+                                      bg=config.COMPONENT_BG, fg=config.GREEN_COLOR, font=config.FONT_MAIN)
+        self.vol_btc_label.pack(anchor="w")
+        
+        self.vol_usdt_label = tk.Label(self.content_frame, text="Vol(USDT): --", 
+                                       bg=config.COMPONENT_BG, fg=config.RED_COLOR, font=config.FONT_MAIN)
+        self.vol_usdt_label.pack(anchor="w")
+
+    def update_data(self, volume_btc, volume_usdt):
+        v_btc = float(volume_btc)
+        v_usdt = float(volume_usdt)
+        
+        self.vol_btc_label.config(text=f"Vol: {v_btc:,.2f} BTC")
+        self.vol_usdt_label.config(text=f"Val: {v_usdt:,.2f} USDT")
