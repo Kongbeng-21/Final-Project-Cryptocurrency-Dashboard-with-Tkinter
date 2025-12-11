@@ -1,6 +1,6 @@
 import tkinter as tk
 from utils.binance_API import BinanceAPI     
-from components.ticker import PriceCard      
+from components.ticker import PriceCard,BidAskCard
 from utils import config                     
 
 class DashboardApp:
@@ -20,10 +20,19 @@ class DashboardApp:
         self.price_card = PriceCard(top_frame, "Last Traded Price")
         self.price_card.pack(side="left", fill="both", expand=True, padx=5)
 
+        self.bid_ask_card = BidAskCard(top_frame)
+        self.bid_ask_card.pack(side="left", fill="both", expand=True, padx=5)
+        
     def handle_data(self, data):
         price = data['c']
         change = data['p']
-        self.root.after(0, self.price_card.update_data, price, change)
+        best_bid = data['b']
+        best_ask = data['a']
+        self.root.after(0, self.update_ui, price, change, best_bid, best_ask)
+    
+    def update_ui(self, price, change, bid, ask):
+        self.price_card.update_data(price, change)
+        self.bid_ask_card.update_data(bid, ask)
 
     def on_closing(self):
         self.api.stop()
