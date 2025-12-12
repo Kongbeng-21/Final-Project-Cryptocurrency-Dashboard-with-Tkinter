@@ -31,9 +31,6 @@ class DashboardApp:
         bottom_frame = tk.Frame(self.root, bg=config.BACKGROUND_COLOR)
         bottom_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
-        self.order_book = OrderBook(bottom_frame)
-        self.order_book.pack(side="left", fill="both", expand=True, padx=5)
-
         self.chart_frame = tk.Frame(bottom_frame, bg="black", width=600)
         self.chart_frame.pack(side="right", fill="both", expand=True, padx=5)
         
