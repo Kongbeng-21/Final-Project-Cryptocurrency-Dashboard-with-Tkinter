@@ -2,6 +2,7 @@ import tkinter as tk
 from utils.binance_API import BinanceAPI     
 from components.ticker import PriceCard,BidAskCard,VolumeCard
 from components.orderbook import OrderBook
+from components.chart import Chart
 from utils import config                     
 
 class DashboardApp:
@@ -36,6 +37,15 @@ class DashboardApp:
         self.chart_frame = tk.Frame(bottom_frame, bg="black", width=600)
         self.chart_frame.pack(side="right", fill="both", expand=True, padx=5)
         
+        bottom_frame = tk.Frame(self.root, bg=config.BACKGROUND_COLOR)
+        bottom_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        self.order_book = OrderBook(bottom_frame)
+        self.order_book.pack(side="left", fill="both", expand=True, padx=5)
+
+        self.chart = Chart(bottom_frame)
+        self.chart.pack(side="right", fill="both", expand=True, padx=5)
+        
     def handle_data(self, data):
         stream = response.get('stream')
         data = response.get('data')
@@ -56,6 +66,9 @@ class DashboardApp:
             asks = data['asks']
             self.root.after(0, self.order_book.update_data, bids, asks)
 
+        elif 'kline' in stream: 
+            k = data['k']
+            self.root.after(0, self.chart.update_candle, k['t'], float(k['o']), float(k['h']), float(k['l']), float(k['c']))
     def update_ticker_ui(self, price, change, bid, ask, vol_btc, vol_usdt):
         self.price_card.update_data(price, change)
         self.bid_ask_card.update_data(bid, ask)
