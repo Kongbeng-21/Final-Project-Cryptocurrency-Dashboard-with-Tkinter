@@ -22,9 +22,9 @@ class OrderBook(tk.Frame):
     def update_data(self, bids, asks):
         for item in self.tree.get_children():
             self.tree.delete(item)
-        for price, amount in reversed(asks[:5]): 
+        for price, amount in reversed(asks[:10]): 
             self.tree.insert("", "end", values=(f"{float(price):,.2f}", f"{float(amount):.5f}"), tags=("ask",))
         self.tree.insert("", "end", values=("---", "---"))
         
-        for price, amount in bids[:5]:
+        for price, amount in bids[:10]:
             self.tree.insert("", "end", values=(f"{float(price):,.2f}", f"{float(amount):.5f}"), tags=("bid",))
