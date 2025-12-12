@@ -21,7 +21,7 @@ class DashboardApp:
         
         tk.Label(control_frame, text="Select Asset:", bg=config.COMPONENT_BG, fg="white", font=config.FONT_MAIN).pack(side="left", padx=10)
         
-        assets = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
+        assets = ["BTCUSDT", "ETHUSDT", "SOLUSDT","DOGEUSDT", "SHIBUSDT"]
         for asset in assets:
             btn = tk.Button(control_frame, text=asset, 
                             command=lambda a=asset: self.change_coin(a),
