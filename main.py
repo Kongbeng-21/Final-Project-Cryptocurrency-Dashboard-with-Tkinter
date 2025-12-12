@@ -81,7 +81,8 @@ class DashboardApp:
             ask = data['a']
             vol_btc = data['v']
             vol_usdt = data['q']
-            self.root.after(0, self.update_ticker_ui, price, change, bid, ask, vol_btc, vol_usdt)
+            self.root.after(0, self.update_ticker_ui, 
+                            data['c'], data['p'], data['P'], data['b'], data['a'], data['v'], data['q'])
         
         elif 'depth' in stream:
             bids = data['bids']
