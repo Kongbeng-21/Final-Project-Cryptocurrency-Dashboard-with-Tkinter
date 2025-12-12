@@ -16,6 +16,17 @@ class DashboardApp:
         self.api.start()
 
     def setup_ui(self):
+        control_frame = tk.Frame(self.root, bg=config.COMPONENT_BG)
+        control_frame.pack(fill="x", padx=10, pady=5)
+        
+        tk.Label(control_frame, text="Select Asset:", bg=config.COMPONENT_BG, fg="white", font=config.FONT_MAIN).pack(side="left", padx=10)
+        
+        assets = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
+        for asset in assets:
+            btn = tk.Button(control_frame, text=asset, 
+                            command=lambda a=asset: self.change_coin(a),
+                            bg="gray", fg="black")
+            btn.pack(side="left", padx=5, pady=5)
         top_frame = tk.Frame(self.root, bg=config.BACKGROUND_COLOR)
         top_frame.pack(fill="x", padx=10, pady=10)
 
@@ -42,6 +53,20 @@ class DashboardApp:
 
         self.chart = Chart(bottom_frame)
         self.chart.pack(side="right", fill="both", expand=True, padx=5)
+        
+    def change_coin(self, new_symbol):
+        print(f"Switching to {new_symbol}...")
+        self.current_coin = new_symbol
+        self.price_card.title_label.config(text=f"{new_symbol} Price")
+        self.chart.times = []
+        self.chart.opens = []
+        self.chart.highs = []
+        self.chart.lows = []
+        self.chart.closes = []
+        self.chart.ax.clear()
+        self.chart.ax.set_title(f"{new_symbol} 1 Minute Chart", color='white')
+        self.chart.canvas.draw()
+        self.api.start(new_symbol)
         
     def handle_data(self, data):
         stream = response.get('stream')
