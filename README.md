@@ -31,7 +31,7 @@ A desktop dashboard for tracking cryptocurrency market data in real-time using P
 
 1.  *Clone the repository*
     
-    git clone <YOUR_GITHUB_LINK_HERE>
+    git clone (https://github.com/Kongbeng-21/Final-Project-Cryptocurrency-Dashboard-with-Tkinter.git)
     cd crypto_dashboard
     
 
