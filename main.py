@@ -1,4 +1,5 @@
 import tkinter as tk
+import json
 from utils.binance_API import BinanceAPI
 from components.ticker import PriceCard,BidAskCard,VolumeCard
 from components.orderbook import OrderBook
@@ -13,10 +14,29 @@ class DashboardApp:
         self.root.geometry("1200x750") 
         self.root.configure(bg=config.BACKGROUND_COLOR)
         self.current_coin = "BTCUSDT" 
+        self.load_preferences()
         self.setup_ui()
         self.api = BinanceAPI(self.handle_data)
-        self.api.start("btcusdt") 
-
+        self.api.start(self.current_coin) 
+    
+    def load_preferences(self):
+        try:
+            with open("user_prefs.json", "r") as f:
+                prefs = json.load(f)
+                self.current_coin = prefs.get("coin", "BTCUSDT")
+                self.show_sidepanel = prefs.get("show_sidepanel", True)
+        except FileNotFoundError:
+            self.current_coin = "BTCUSDT"
+            self.show_sidepanel = True
+            
+    def save_preferences(self):
+        prefs = {
+            "coin": self.current_coin,
+            "show_sidepanel": self.show_sidepanel
+        }
+        with open("user_prefs.json", "w") as f:
+            json.dump(prefs, f)
+            
     def setup_ui(self):
         control_frame = tk.Frame(self.root, bg=config.COMPONENT_BG)
         control_frame.pack(fill="x", padx=10, pady=5)
@@ -37,6 +57,9 @@ class DashboardApp:
                                          bg="gray", fg="black")
         self.btn_toggle_side.pack(side="left", padx=5)
 
+        if not self.show_sidepanel:
+            self.btn_toggle_side.config(text="Show SidePanel")
+        
         top_frame = tk.Frame(self.root, bg=config.BACKGROUND_COLOR)
         top_frame.pack(fill="x", padx=10, pady=10)
 
@@ -64,6 +87,10 @@ class DashboardApp:
         self.chart = Chart(bottom_frame)
         self.chart.pack(side="right", fill="both", expand=True, padx=5)
 
+        if not self.show_sidepanel:
+             self.left_panel.pack_forget()
+             
+             
     def change_coin(self, new_symbol):
         print(f"Switching to {new_symbol}...")
         self.current_coin = new_symbol
@@ -117,6 +144,7 @@ class DashboardApp:
             self.show_sidepanel = True
         
     def on_closing(self):
+        self.save_preferences()
         self.api.stop()
         self.root.destroy()
 
