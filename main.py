@@ -68,32 +68,34 @@ class DashboardApp:
         self.chart.canvas.draw()
         self.api.start(new_symbol)
         
-    def handle_data(self, data):
+    def handle_data(self, response):
+        if not response or not isinstance(response, dict):
+            return
+
         stream = response.get('stream')
         data = response.get('data')
-
+        
         if not data: return
 
         if 'ticker' in stream:
-            price = data['c']
-            change = data['p']
-            bid = data['b']
-            ask = data['a']
-            vol_btc = data['v']
-            vol_usdt = data['q']
             self.root.after(0, self.update_ticker_ui, 
-                            data['c'], data['p'], data['P'], data['b'], data['a'], data['v'], data['q'])
-        
+                            data['c'],  
+                            data['p'],  
+                            data['P'],  
+                            data['b'],  
+                            data['a'], 
+                            data['v'], 
+                            data['q']) 
+            
         elif 'depth' in stream:
-            bids = data['bids']
-            asks = data['asks']
-            self.root.after(0, self.order_book.update_data, bids, asks)
+             self.root.after(0, self.order_book.update_data, data['bids'], data['asks'])
+             
+        elif 'kline' in stream:
+             k = data['k']
+             self.root.after(0, self.chart.update_candle, k['t'], float(k['o']), float(k['h']), float(k['l']), float(k['c']))
 
-        elif 'kline' in stream: 
-            k = data['k']
-            self.root.after(0, self.chart.update_candle, k['t'], float(k['o']), float(k['h']), float(k['l']), float(k['c']))
-    def update_ticker_ui(self, price, change, bid, ask, vol_btc, vol_usdt):
-        self.price_card.update_data(price, change)
+    def update_ticker_ui(self, price, change, percent, bid, ask, vol_btc, vol_usdt):
+        self.price_card.update_data(price, change, percent) 
         self.bid_ask_card.update_data(bid, ask)
         self.volume_card.update_data(vol_btc, vol_usdt)
         

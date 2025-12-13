@@ -8,18 +8,22 @@ class BinanceAPI:
         self.ws = None
         self.is_running = False
         self.callback_func = callback_func
-        self.ws_url = config.WS_URL
+        self.current_symbol = "btcusdt"
 
-    def start(self):
+    def start(self,symbol="btcusdt"):
+        self.stop()
+        
+        self.current_symbol = symbol.lower()
+        ws_url = config.BASE_WS_URL.format(symbol=self.current_symbol)
+        
         self.is_running = True
         self.ws = websocket.WebSocketApp(
-            self.ws_url,
+            ws_url,
             on_message=self.on_message,
             on_error=self.on_error,
             on_close=self.on_close
         )
-        wst = threading.Thread(target=self.ws.run_forever, daemon=True)
-        wst.start()
+        threading.Thread(target=self.ws.run_forever, daemon=True).start()
 
     def stop(self):
         self.is_running = False
