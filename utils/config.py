@@ -5,4 +5,4 @@ GREEN_COLOR = "#00ff00"
 RED_COLOR = "#ff0000"
 FONT_MAIN = ("Arial", 12)
 FONT_LARGE = ("Arial", 24, "bold")
-BASE_WS_URL = "wss://stream.binance.com:9443/stream?streams={symbol}@ticker/{symbol}@depth10@100ms/{symbol}@kline_1m"
+BASE_WS_URL = "wss://stream.binance.com:9443/stream?streams={symbol}@ticker/{symbol}@depth10@100ms/{symbol}@kline_1m/{symbol}@trade"
