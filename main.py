@@ -138,8 +138,8 @@ class DashboardApp:
     def update_ticker_ui(self, price, change, percent, bid, ask, vol_btc, vol_usdt):
         self.price_card.update_data(price, change, percent) 
         self.bid_ask_card.update_data(bid, ask)
-        self.volume_card.update_data(vol_btc, vol_usdt)
-
+        self.volume_card.update_data(vol_btc, vol_usdt, self.current_coin)
+        
     def toggle_sidepanel(self):
         if self.show_sidepanel:
             self.left_panel.pack_forget()
