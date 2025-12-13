@@ -1,0 +1,5 @@
+websocket-client
+requests
+numpy
+matplotlib
+certifi
