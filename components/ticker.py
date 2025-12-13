@@ -4,8 +4,10 @@ from utils import config
 class PriceCard(tk.Frame):
     def __init__(self, parent, title):
         super().__init__(parent, bg=config.COMPONENT_BG)
+        self.title_label = tk.Label(self, text=title, bg=config.COMPONENT_BG, fg=config.TEXT_COLOR, font=config.FONT_MAIN)
+        self.title_label.pack(pady=5)
         self.price_label = tk.Label(self, text="Loading...", bg=config.COMPONENT_BG, fg=config.TEXT_COLOR, font=config.FONT_LARGE)
-        self.price_label.pack()
+        self.price_label.pack(pady=10)
 
     def update_data(self, price, change,percent):
         color = config.GREEN_COLOR if float(change) >= 0 else config.RED_COLOR
@@ -57,9 +59,7 @@ class VolumeCard(tk.Frame):
                                        bg=config.COMPONENT_BG, fg=config.RED_COLOR, font=config.FONT_MAIN)
         self.vol_usdt_label.pack(anchor="w")
 
-    def update_data(self, volume_btc, volume_usdt):
-        v_btc = float(volume_btc)
-        v_usdt = float(volume_usdt)
-        
-        self.vol_btc_label.config(text=f"Vol: {v_btc:,.2f} BTC")
-        self.vol_usdt_label.config(text=f"Val: {v_usdt:,.2f} USDT")
+    def update_data(self, price, change, percent):
+        color = config.GREEN_COLOR if float(change) >= 0 else config.RED_COLOR
+        text_display = f"${float(price):,.2f}\n{float(change):+.2f} ({float(percent):+.2f}%)"
+        self.price_label.config(text=text_display, fg=color)
