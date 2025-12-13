@@ -42,20 +42,26 @@ class DashboardApp:
         control_frame.pack(fill="x", padx=10, pady=5)
         
         tk.Label(control_frame, text="Select Asset:", bg=config.COMPONENT_BG, fg="white", font=config.FONT_MAIN).pack(side="left", padx=10)
-        
+        self.asset_buttons = {}
         assets = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "DOGEUSDT", "SHIBUSDT"]
         for asset in assets:
-            tk.Button(control_frame, text=asset, 
-                      command=lambda a=asset: self.change_coin(a),
-                      bg="gray", fg="black").pack(side="left", padx=5)
-
+            btn = tk.Label(control_frame, text=asset, 
+                           bg=config.BTN_NORMAL_BG, fg=config.BTN_NORMAL_FG,
+                           font=("Arial", 10, "bold"),
+                           padx=10, pady=5, cursor="hand2") 
+            btn.pack(side="left", padx=5, pady=5)
+            btn.bind("<Button-1>", lambda event, a=asset: self.change_coin(a))
+            self.asset_buttons[asset] = btn
+            
         tk.Label(control_frame, text="|", bg=config.COMPONENT_BG, fg="white").pack(side="left", padx=10)
         
         self.show_sidepanel = True
-        self.btn_toggle_side = tk.Button(control_frame, text="Hide SidePanel", 
-                                         command=self.toggle_sidepanel,
-                                         bg="gray", fg="black")
+        self.btn_toggle_side = tk.Label(control_frame, text="Hide SidePanel", 
+                                        bg=config.BTN_NORMAL_BG, fg=config.BTN_NORMAL_FG,
+                                        font=("Arial", 10, "bold"),
+                                        padx=10, pady=5, cursor="hand2")
         self.btn_toggle_side.pack(side="left", padx=5)
+        self.btn_toggle_side.bind("<Button-1>", lambda event: self.toggle_sidepanel())
 
         if not self.show_sidepanel:
             self.btn_toggle_side.config(text="Show SidePanel")
@@ -94,12 +100,13 @@ class DashboardApp:
     def change_coin(self, new_symbol):
         print(f"Switching to {new_symbol}...")
         self.current_coin = new_symbol
+        for asset, btn in self.asset_buttons.items():
+            if asset == new_symbol:
+                btn.config(bg=config.BTN_SELECTED_BG, fg=config.BTN_SELECTED_FG)
+            else:
+                btn.config(bg=config.BTN_NORMAL_BG, fg=config.BTN_NORMAL_FG)           
         self.price_card.title_label.config(text=f"{new_symbol} Price")
-        self.chart.times = []
-        self.chart.opens = []
-        self.chart.highs = []
-        self.chart.lows = []
-        self.chart.closes = []
+        self.chart.candles = []
         self.chart.ax.clear()
         self.chart.ax.set_title(f"{new_symbol} 1 Minute Chart", color='white')
         self.chart.canvas.draw()
@@ -136,11 +143,13 @@ class DashboardApp:
     def toggle_sidepanel(self):
         if self.show_sidepanel:
             self.left_panel.pack_forget()
-            self.btn_toggle_side.config(text="Show SidePanel")
+            self.btn_toggle_side.config(text="Show SidePanel",fg="orange")
             self.show_sidepanel = False
         else:
+            self.chart.pack_forget()
             self.left_panel.pack(side="left", fill="both", expand=False)
-            self.btn_toggle_side.config(text="Hide SidePanel")
+            self.chart.pack(side="right", fill="both", expand=True, padx=5)
+            self.btn_toggle_side.config(text="Hide SidePanel", fg=config.BTN_NORMAL_FG)
             self.show_sidepanel = True
         
     def on_closing(self):

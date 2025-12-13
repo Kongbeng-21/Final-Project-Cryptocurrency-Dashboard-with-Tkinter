@@ -6,3 +6,7 @@ RED_COLOR = "#ff0000"
 FONT_MAIN = ("Arial", 12)
 FONT_LARGE = ("Arial", 24, "bold")
 BASE_WS_URL = "wss://stream.binance.com:9443/stream?streams={symbol}@ticker/{symbol}@depth10@100ms/{symbol}@kline_1m/{symbol}@trade"
+BTN_NORMAL_BG = "#3a3a3a"    
+BTN_NORMAL_FG = "#ffffff"    
+BTN_SELECTED_BG = "#00ff00"  
+BTN_SELECTED_FG = "#000000"
